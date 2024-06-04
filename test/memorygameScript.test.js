@@ -1,17 +1,17 @@
 import { incTime, fisherYatesShuffle, createBoard, checkForMatch, flipCard, unfoundBg, foundBg } from '../js/memorygameScript';
 
-describe('Memory Game', () => {
-    // Declare variables to hold references to the mocked DOM elements
+describe('Memory Spiel', () => {
+    // Deklarieren von Variablen, um Referenzen zu den gemockten DOM-Elementen zu halten
     let timeElement;
     let boardElement;
     let attemptsCounterElement;
 
-    // This function will run before each test
+    // Diese Funktion wird vor jedem Test ausgeführt
     beforeEach(() => {
-        // Use fake timers for Jest to control the passage of time in tests
+        // Verwenden von Fake-Timern für Jest, um den Zeitverlauf in Tests zu kontrollieren
         jest.useFakeTimers();
 
-        // Create and append mock DOM elements for the game components
+        // Erstellen und Anhängen gemockter DOM-Elemente für die Spielkomponenten
         timeElement = document.createElement('div');
         timeElement.id = 'time';
         document.body.appendChild(timeElement);
@@ -25,72 +25,217 @@ describe('Memory Game', () => {
         document.body.appendChild(attemptsCounterElement);
     });
 
-    // This function will run after each test
+    // Diese Funktion wird nach jedem Test ausgeführt
     afterEach(() => {
-        // Clear all timers and reset the DOM
         jest.clearAllTimers();
         document.body.innerHTML = '';
     });
 
-    // Test the incTime function to ensure it increments the time counter
-    test('incTime should increment the time counter', () => {
-        incTime();  // Call the function to increment the time
-        expect(timeElement.innerText).toBe('1');  // Check if the time element's text is updated correctly
+    // 1. Testen der Funktion incTime, um sicherzustellen, dass der Zeit-Countdown erhöht wird
+    test('incTime sollte den Zeit-Countdown erhöhen', () => {
+        incTime();  // Aufrufen der Funktion zum Erhöhen der Zeit
+        expect(timeElement.innerText).toBe('1');  // Überprüfen, ob der Text des Zeitelements korrekt aktualisiert wird
     });
 
-    // Test the fisherYatesShuffle function to ensure it shuffles the array
-    test('fisherYatesShuffle should shuffle the array', () => {
-        const arr = [1, 2, 3, 4, 5];  // Define an array to shuffle
-        fisherYatesShuffle(arr);  // Shuffle the array
-        expect(arr).not.toEqual([1, 2, 3, 4, 5]);  // Check that the array is not in its original order
+    // 2. Testen der Funktion fisherYatesShuffle, um sicherzustellen, dass das Array gemischt wird
+    test('fisherYatesShuffle sollte das Array mischen', () => {
+        const arr = [1, 2, 3, 4, 5];  // Definieren eines Arrays zum Mischen
+        fisherYatesShuffle(arr);  // Mischen des Arrays
+        expect(arr).not.toEqual([1, 2, 3, 4, 5]);  // Überprüfen, dass das Array nicht in seiner ursprünglichen Reihenfolge ist
     });
 
-    // Test the createBoard function to ensure it creates cards on the board
-    test('createBoard should create cards on the board', () => {
+    // 3. Testen der Funktion createBoard, um sicherzustellen, dass Karten auf dem Spielbrett erstellt werden
+    test('createBoard sollte Karten auf dem Spielbrett erstellen', () => {
         const cards = [
             { id: "1", image: "pics/card1.png" },
             { id: "1", image: "pics/card16.png" }
         ];
 
-        createBoard(boardElement, cards, () => {});  // Create the board with the given cards
+        createBoard(boardElement, cards, () => {});  // Erstellen des Spielfelds mit den angegebenen Karten
 
-        expect(boardElement.children.length).toBe(cards.length);  // Check if the correct number of cards are created
+        expect(boardElement.children.length).toBe(cards.length);  // Überprüfen, ob die korrekte Anzahl von Karten erstellt wurde
         for (let i = 0; i < cards.length; i++) {
-            expect(boardElement.children[i].getAttribute('src')).toBe(unfoundBg);  // Check if each card has the correct initial background
+            expect(boardElement.children[i].getAttribute('src')).toBe(unfoundBg);  // Überprüfen, ob jede Karte den korrekten anfänglichen Hintergrund hat
         }
     });
 
-    // Test the flipCard function to ensure it flips the card and checks for a match
-    test('flipCard should flip the card and check for match', () => {
+    // 4. Testen der Funktion flipCard, um sicherzustellen, dass die Karte umgedreht wird und nach einer Übereinstimmung sucht
+    test('flipCard sollte die Karte umdrehen und nach einer Übereinstimmung suchen', () => {
         const cards = [
             { id: "1", image: "pics/card1.png" },
             { id: "1", image: "pics/card16.png" }
         ];
 
-        createBoard(boardElement, cards, () => {});  // Create the board with the given cards
+        createBoard(boardElement, cards, () => {});  // Erstellen des Spielfelds mit den angegebenen Karten
 
-        const cardElement1 = boardElement.children[0];  // Get the first card element
-        const cardElement2 = boardElement.children[1];  // Get the second card element
+        const cardElement1 = boardElement.children[0];  // Erhalten des ersten Karten-Elements
+        const cardElement2 = boardElement.children[1];  // Erhalten des zweiten Karten-Elements
 
-        // Flip the first card and check for a match
+        // Umdrehen der ersten Karte und Überprüfen auf Übereinstimmung
         flipCard(cards, cardElement1, () => {
             checkForMatch(cards, attemptsCounterElement);
         });
 
-        expect(cardElement1.getAttribute('src')).toBe('pics/card1.png');  // Check if the first card is flipped correctly
+        expect(cardElement1.getAttribute('src')).toBe('pics/card1.png');  // Überprüfen, ob die erste Karte korrekt umgedreht wird
 
-        // Flip the second card and check for a match
+        // Umdrehen der zweiten Karte und Überprüfen auf Übereinstimmung
         flipCard(cards, cardElement2, () => {
             checkForMatch(cards, attemptsCounterElement);
         });
 
-        expect(cardElement2.getAttribute('src')).toBe('pics/card16.png');  // Check if the second card is flipped correctly
+        expect(cardElement2.getAttribute('src')).toBe('pics/card16.png');  // Überprüfen, ob die zweite Karte korrekt umgedreht wird
 
-        jest.runAllTimers();  // Run all timers to process the match checking
+        jest.runAllTimers();  // Ausführen aller Timer, um die Übereinstimmungsprüfung zu verarbeiten
 
-        // Check if both cards are marked as found and the attempts counter is incremented
+        // Überprüfen, ob beide Karten als gefunden markiert und der Versuchszähler erhöht wurde
         expect(cardElement1.getAttribute('src')).toBe(foundBg);
         expect(cardElement2.getAttribute('src')).toBe(foundBg);
         expect(attemptsCounterElement.textContent).toBe('1');
     });
-});
+
+    // 5. Testen, ob der Timer stoppt, wenn alle Karten gefunden sind
+    test('Timer stoppt, wenn alle Karten gefunden sind', () => {
+        const cards = [
+            { id: "1", image: "pics/card1.png" },
+            { id: "1", image: "pics/card1.png" }
+        ];
+
+        createBoard(boardElement, cards, () => {});  // Erstellen des Spielfelds mit den angegebenen Karten
+
+        const cardElement1 = boardElement.children[0];  // Erhalten des ersten Karten-Elements
+        const cardElement2 = boardElement.children[1];  // Erhalten des zweiten Karten-Elements
+
+        flipCard(cards, cardElement1, () => {
+            checkForMatch(cards, attemptsCounterElement);
+        });
+
+        flipCard(cards, cardElement2, () => {
+            checkForMatch(cards, attemptsCounterElement);
+        });
+
+        jest.runAllTimers();  // Ausführen aller Timer, um die Übereinstimmungsprüfung zu verarbeiten
+
+        // Überprüfen, ob der Timer gelöscht wird
+        expect(clearInterval).toHaveBeenCalled();
+    });
+
+    // 6. Testen, ob das Umdrehen einer Karte sie dem flippedCards-Array hinzufügt
+    test('Umdrehen einer Karte fügt sie dem flippedCards-Array hinzu', () => {
+        const cards = [
+            { id: "1", image: "pics/card1.png" },
+            { id: "2", image: "pics/card2.png" }
+        ];
+
+        createBoard(boardElement, cards, () => {});  // Erstellen des Spielfelds mit den angegebenen Karten
+
+        const cardElement1 = boardElement.children[0];  // Erhalten des ersten Karten-Elements
+
+        flipCard(cards, cardElement1, () => {});
+
+        // Überprüfen, ob die ID der Karte dem flippedCards-Array hinzugefügt wurde
+        expect(flippedCards.length).toBe(1);
+        expect(flippedCards[0]).toBe("0");
+    });
+
+    // 7. Testen, ob nicht übereinstimmende Karten zurückgedreht werden
+    test('Nicht übereinstimmende Karten werden zurückgedreht', () => {
+        const cards = [
+            { id: "1", image: "pics/card1.png" },
+            { id: "2", image: "pics/card2.png" }
+        ];
+
+        createBoard(boardElement, cards, () => {});  // Erstellen des Spielfelds mit den angegebenen Karten
+
+        const cardElement1 = boardElement.children[0];  // Erhalten des ersten Karten-Elements
+        const cardElement2 = boardElement.children[1];  // Erhalten des zweiten Karten-Elements
+
+        flipCard(cards, cardElement1, () => {});
+        flipCard(cards, cardElement2, () => {});
+
+        jest.runAllTimers();  // Ausführen aller Timer, um die Übereinstimmungsprüfung zu verarbeiten
+
+        // Überprüfen, ob nicht übereinstimmende Karten zurückgedreht werden
+        expect(cardElement1.getAttribute('src')).toBe(unfoundBg);
+        expect(cardElement2.getAttribute('src')).toBe(unfoundBg);
+    });
+
+    // 8. Testen, ob der Versuchszähler korrekt erhöht wird
+    test('Versuchszähler wird korrekt erhöht', () => {
+        const cards = [
+            { id: "1", image: "pics/card1.png" },
+            { id: "2", image: "pics/card2.png" }
+        ];
+
+        createBoard(boardElement, cards, () => {});
+
+        const cardElement1 = boardElement.children[0];
+        const cardElement2 = boardElement.children[1];
+
+        flipCard(cards, cardElement1, () => {
+            checkForMatch(cards, attemptsCounterElement);
+        });
+
+        flipCard(cards, cardElement2, () => {
+            checkForMatch(cards, attemptsCounterElement);
+        });
+
+        jest.runAllTimers();
+
+        expect(attemptsCounterElement.textContent).toBe('1');
+    });
+
+    // 9. Testen, ob das Spiel eine Nachricht anzeigt, wenn alle Karten gefunden sind
+    test('Spiel zeigt eine Nachricht an, wenn alle Karten gefunden sind', () => {
+        const cards = [
+            { id: "1", image: "pics/card1.png" },
+            { id: "1", image: "pics/card1.png" }
+        ];
+
+        createBoard(boardElement, cards, () => {});
+
+        const cardElement1 = boardElement.children[0];
+        const cardElement2 = boardElement.children[1];
+
+        window.alert = jest.fn();  // Mocken der Alert-Funktion
+
+        flipCard(cards, cardElement1, () => {
+            checkForMatch(cards, attemptsCounterElement);
+        });
+
+        flipCard(cards, cardElement2, () => {
+            checkForMatch(cards, attemptsCounterElement);
+        });
+
+        jest.runAllTimers();
+
+        // Überprüfen, ob eine Nachricht angezeigt wird, wenn alle Karten gefunden sind
+        expect(window.alert).toHaveBeenCalledWith("GOOD JOB!");
+    });
+
+    // 10. Testen, ob doppelte Karten-IDs korrekt behandelt werden
+    test('Doppelte Karten-IDs werden korrekt behandelt', () => {
+        const cards = [
+            { id: "1", image: "pics/card1.png" },
+            { id: "1", image: "pics/card1.png" },
+            { id: "1", image: "pics/card1.png" },
+            { id: "2", image: "pics/card2.png" }
+        ];
+
+        createBoard(boardElement, cards, () => {});
+
+        const cardElement1 = boardElement.children[0];
+        const cardElement2 = boardElement.children[1];
+        const cardElement3 = boardElement.children[2];
+        const cardElement4 = boardElement.children[3];
+
+        flipCard(cards, cardElement1, () => {});
+        flipCard(cards, cardElement2, () => {});
+        jest.runAllTimers();
+
+        // Überprüfen, ob nur zwei Karten mit derselben ID als gefunden markiert sind
+        expect(cardElement1.getAttribute('src')).toBe(foundBg);
+        expect(cardElement2.getAttribute('src')).toBe(foundBg);
+        expect(cardElement3.getAttribute('src')).toBe(unfoundBg);
+        expect(cardElement4.getAttribute('src')).toBe(unfoundBg);
+    });
+})
